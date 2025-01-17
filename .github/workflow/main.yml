@@ -1,4 +1,4 @@
-name: log_analyzer CI/CD 
+name: scoring CI/CD 
 on:
   push
 jobs:
