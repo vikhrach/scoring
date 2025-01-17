@@ -23,4 +23,4 @@ jobs:
           poetry run flake8 --max-line-length=120
       - name: Run tests
         run: |
-          python -m unittest test.py
+          poetry run pytest test.py

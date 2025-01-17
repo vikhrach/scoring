@@ -29,8 +29,8 @@ repos:
 
 -   repo: local
     hooks:
-    -   id: unittest
-        entry: python -m unittest test.py
-        name: unittest
+    -   id: pytest
+        entry: pytest test.py
+        name: pytest
         language: system
         types: [python]
