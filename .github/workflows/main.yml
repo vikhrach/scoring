@@ -7,6 +7,12 @@ jobs:
     strategy: 
       matrix:
         python-version: [3.12]
+    services:
+      redis:
+        image: redis:latest    # Use the latest Redis image from Docker Hub
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 3
+        ports:
+          - 6379:6379          # Map the Redis port to the host machine
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -21,6 +27,9 @@ jobs:
       - name: Run linter flake8
         run: |
           poetry run flake8 --max-line-length=120
+      - name: Run server
+        run: |
+          poetry run python app.py
       - name: Run tests
         run: |
-          poetry run pytest test.py
+          poetry run pytest ./tests

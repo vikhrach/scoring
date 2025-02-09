@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import scoring
+import store
 
 SALT = "Otus"
 ADMIN_LOGIN = "admin"
@@ -152,8 +153,8 @@ class ClientsInterestsRequest:
         self.client_ids = ClientIDsField(argument_dict.get("client_ids"), required=True)
         self.date = DateField(argument_dict.get("date"), required=False, nullable=True)
 
-    def process(self):
-        output = {str(i): scoring.get_interests(None, i) for i in self.client_ids.value}
+    def process(self, store):
+        output = {str(i): scoring.get_interests(store, i) for i in self.client_ids.value}
         return output
 
 
@@ -168,9 +169,15 @@ class OnlineScoreRequest:
         if not self._validate():
             raise ValueError("Некорректный набор аргументов для метода online_score")
 
-    def process(self):
+    def process(self, store):
         return scoring.get_score(
-            None, self.phone, self.email, self.birthday, self.gender, self.first_name, self.last_name
+            store,
+            self.phone.value,
+            self.email.value,
+            self.birthday.value,
+            self.gender.value,
+            self.first_name.value,
+            self.last_name.value,
         )
 
     def _validate(self):
@@ -195,16 +202,16 @@ class MethodRequest:
     def is_admin(self):
         return self.login.value == ADMIN_LOGIN
 
-    def process(self, ctx):
+    def process(self, ctx, store):
         match self.method.value:
             case "online_score":
                 if self.login.value == "admin":
                     return {"score": 42}
-                out = {"score": OnlineScoreRequest(self.arguments.value).process()}
+                out = {"score": OnlineScoreRequest(self.arguments.value).process(store)}
                 ctx["has"] = self.arguments.value.keys()
                 return out
             case "clients_interests":
-                out = ClientsInterestsRequest(self.arguments.value).process()
+                out = ClientsInterestsRequest(self.arguments.value).process(store)
                 ctx["nclients"] = len(self.arguments.value.get("client_ids"))
                 return out
 
@@ -222,7 +229,7 @@ def method_handler(request, ctx, store):
     try:
         request = MethodRequest(request.get("body"))
 
-        response, code = request.process(ctx), OK
+        response, code = request.process(ctx, store), OK
         return response, code
     except ValueError as e:
         logging.exception(e)
@@ -237,7 +244,7 @@ def method_handler(request, ctx, store):
 
 class MainHTTPHandler(BaseHTTPRequestHandler):
     router = {"method": method_handler}
-    store = None
+    store = store.RedisStore()
 
     def get_request_id(self, headers):
         return headers.get("HTTP_X_REQUEST_ID", uuid.uuid4().hex)
@@ -283,11 +290,13 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--log", action="store", default=None)
     args = parser.parse_args()
     logging.basicConfig(
-        filename=args.log,
+        # filename=args.log,
         level=logging.INFO,
         format="[%(asctime)s] %(levelname).1s %(message)s",
         datefmt="%Y.%m.%d %H:%M:%S",
+        handlers=[logging.StreamHandler()],
     )
+
     server = HTTPServer(("localhost", args.port), MainHTTPHandler)
     logging.info("Starting server at %s" % args.port)
     try:
