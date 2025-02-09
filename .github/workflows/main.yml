@@ -29,7 +29,7 @@ jobs:
           poetry run flake8 --max-line-length=120
       - name: Run server
         run: |
-          poetry run python ../app.py
+          poetry run python api.py
       - name: Run tests
         run: |
           poetry run pytest ./tests
