@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Optional
 
-import store
+from scoring import store
 
 
 def get_score(

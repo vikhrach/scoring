@@ -1,4 +1,4 @@
-import store
+from scoring import store
 
 
 def test_singleton():

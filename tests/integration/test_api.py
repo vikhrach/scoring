@@ -3,8 +3,7 @@ import datetime
 import pytest
 import requests
 
-import api
-import store
+from scoring import api, store
 
 
 @pytest.mark.parametrize(

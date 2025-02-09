@@ -1,7 +1,7 @@
 import pytest
 
-import api
-import store
+import scoring.api as api
+import scoring.store as store
 
 
 @pytest.fixture

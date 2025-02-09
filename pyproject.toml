@@ -2,7 +2,7 @@
 name = "scoring"
 version = "0.1.0"
 description = ""
-authors = ["Vadim Vikhrachev <vikhrachev@gmail.com>"]
+authors = ["Vadim Vikhrachev <vihrachev@anc.space>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

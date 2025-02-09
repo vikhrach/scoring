@@ -4,8 +4,7 @@ import logging
 
 import pytest
 
-import api
-import store
+from scoring import api, store
 
 logging.basicConfig(
     # filename=args.log,
