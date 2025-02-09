@@ -93,3 +93,17 @@ $ curl -X POST  -H "Content-Type: application/json" -d '{"account": "horns&hoofs
 ```
 ```
 {"code": 200, "response": {"1": ["books", "hi-tech"], "2": ["pets", "tv"], "3": ["travel", "music"], "4": ["cinema", "geek"]}}```
+
+#### Тестирование
+
+### Интеграционное
+__Запуск Redis__
+*  ```docker pull redis```
+*  ```docker run --name redis-container -d -p 6379:6379 redis```
+
+__Запустить сервер__
+* ```nohup poetry run python runserver.py &```
+
+__Запустить тесты__
+* ```poetry run pytest -v```
+
