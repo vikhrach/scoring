@@ -23,7 +23,7 @@ jobs:
         with:
           poetry-version: 1.8.4
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --no-root
       - name: Run linter flake8
         run: |
           poetry run flake8 --max-line-length=120
@@ -32,4 +32,4 @@ jobs:
           nohup poetry run python runserver.py &
       - name: Run tests
         run: |
-          poetry run pytest ./tests
+          poetry run pytest tests
