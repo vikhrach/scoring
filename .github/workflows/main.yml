@@ -2,7 +2,7 @@ name: scoring CI/CD
 on:
   push
 jobs:
-  test:
+  runserver:
     runs-on: ubuntu-latest
     strategy: 
       matrix:
